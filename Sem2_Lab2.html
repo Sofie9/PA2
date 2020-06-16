@@ -29,7 +29,9 @@
             // sensor.start();
 
             requestOrientationPermission()
-             
+            const sensor = new AbsoluteOrientationSensor( { frequency: 60 } );
+            sensor.onreading = () => object.quaternion.fromArray(sensor.quaternion);
+            sensor.start();
             //requesting device orientation permission
             function requestOrientationPermission(){
                 if (typeof( DeviceOrientationEvent ) !== "undefined" && typeof( DeviceOrientationEvent.requestPermission ) === "function" ) {
