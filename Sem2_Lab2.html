@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+        <title>three.js- Orientation</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color:black;
+				margin: 0px;
+				overflow: hidden;
+			}
+            label {
+                color:aliceblue;
+                width:150px;
+                display: inline-block;
+            }
+		</style>
+	</head>
+	<body>
+		<script src="build/three.min.js"></script>
+		<script>
+            // for requesting permission on iOs 13 devices
+           
+            // requesting device orientation permission
+            // requestDeviceOrientationIOS() {
+            //     if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+            //         (DeviceOrientationEvent as any).requestPermission()
+            //         .then(permissionState => {
+            //         if (permissionState === 'granted') {
+            //             window.addEventListener('deviceorientation', () => {});
+            //         }
+            //         })
+            //         .catch(console.error);
+            //         } else {
+            //         // handle regular non iOS 13+ devices
+            //     }
+            // }
+			var camera, scene, renderer, object, rotate;
+            
+            init();
+            const sensor = new AbsoluteOrientationSensor( { frequency: 60 } );
+            sensor.onreading = () => object.quaternion.fromArray(sensor.quaternion);
+            sensor.start();
+            animate();
+           
+			function init() {
+                //Camera
+                camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+                camera.position.z = 5;
+
+                //Scene
+                scene = new THREE.Scene();
+                scene.background = new THREE.Color( 0xFFFFFF );
+
+                //Renderer
+                renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
+
+                //Object
+                const o = new THREE.BoxGeometry(10, 10, 0.1);
+                const loader = new THREE.TextureLoader();
+                const materials = [
+                    new THREE.MeshBasicMaterial({color: 0xFFFFFF, }),
+                    new THREE.MeshBasicMaterial({color: 0xFFFFFF, }),
+                    new THREE.MeshBasicMaterial({color: 0xFFFFFF, }),
+                    new THREE.MeshBasicMaterial({color: 0xFFFFFF, }),
+                    new THREE.MeshBasicMaterial({map: loader.load('textures/iphone2.jpg')}),
+                    new THREE.MeshBasicMaterial({map: loader.load('textures/iphone3.jpg')}),
+                ];
+                object = new THREE.Mesh(o, materials);
+                object.position.set(0, 0, -25);
+                scene.add(object);
+                //
+			}
+			function animate() {
+				requestAnimationFrame( animate );
+				renderer.render( scene, camera );
+			}
+		</script>
+	</body>
+</html>
